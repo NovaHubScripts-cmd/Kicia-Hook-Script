@@ -1,1 +1,42 @@
-test
+-- Simple message box using ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local Label = Instance.new("TextLabel")
+local CloseButton = Instance.new("TextButton")
+
+-- Parent to PlayerGui
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+-- Frame (the box)
+Frame.Size = UDim2.new(0, 300, 0, 150)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -75)
+Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Frame.BorderSizePixel = 0
+Frame.Parent = ScreenGui
+
+-- Message text
+Label.Size = UDim2.new(1, 0, 0.6, 0)
+Label.Position = UDim2.new(0, 0, 0, 0)
+Label.BackgroundTransparency = 1
+Label.Text = "Hi"
+Label.TextColor3 = Color3.fromRGB(255, 255, 255)
+Label.TextScaled = true
+Label.Font = Enum.Font.GothamBold
+Label.Parent = Frame
+
+-- Close button
+CloseButton.Size = UDim2.new(0.4, 0, 0.3, 0)
+CloseButton.Position = UDim2.new(0.3, 0, 0.65, 0)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.Text = "Close"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.Gotham
+CloseButton.TextScaled = true
+CloseButton.BorderSizePixel = 0
+CloseButton.Parent = Frame
+
+-- Close button functionality
+CloseButton.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
