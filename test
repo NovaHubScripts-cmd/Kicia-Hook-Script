@@ -1,42 +1,131 @@
--- Simple message box using ScreenGui
+-- Executor Check
+local supportedExecutors = {"Volt", "Wave"}
+local executorName = (identifyexecutor and identifyexecutor()) or "Unknown"
+
+local isSupported = false
+for _, name in ipairs(supportedExecutors) do
+    if string.lower(executorName):find(string.lower(name)) then
+        isSupported = true
+        break
+    end
+end
+
+-- GUI Setup
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
 local ScreenGui = Instance.new("ScreenGui")
+local Blur = Instance.new("Frame") -- dark overlay
 local Frame = Instance.new("Frame")
-local Label = Instance.new("TextLabel")
+local UICorner = Instance.new("UICorner")
+local TopBar = Instance.new("Frame")
+local TopBarCorner = Instance.new("UICorner")
+local Title = Instance.new("TextLabel")
+local Divider = Instance.new("Frame")
+local MessageLabel = Instance.new("TextLabel")
 local CloseButton = Instance.new("TextButton")
+local CloseCorner = Instance.new("UICorner")
 
--- Parent to PlayerGui
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 ScreenGui.ResetOnSpawn = false
+ScreenGui.DisplayOrder = 999
 
--- Frame (the box)
-Frame.Size = UDim2.new(0, 300, 0, 150)
-Frame.Position = UDim2.new(0.5, -150, 0.5, -75)
-Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+-- Dark background overlay
+Blur.Size = UDim2.new(1, 0, 1, 0)
+Blur.Position = UDim2.new(0, 0, 0, 0)
+Blur.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Blur.BackgroundTransparency = 0.4
+Blur.BorderSizePixel = 0
+Blur.ZIndex = 1
+Blur.Parent = ScreenGui
+
+-- Main box
+Frame.Size = UDim2.new(0, 340, 0, 180)
+Frame.Position = UDim2.new(0.5, -170, 0.5, -90)
+Frame.BackgroundColor3 = Color3.fromRGB(18, 18, 24)
 Frame.BorderSizePixel = 0
+Frame.ZIndex = 2
 Frame.Parent = ScreenGui
 
--- Message text
-Label.Size = UDim2.new(1, 0, 0.6, 0)
-Label.Position = UDim2.new(0, 0, 0, 0)
-Label.BackgroundTransparency = 1
-Label.Text = "Hi"
-Label.TextColor3 = Color3.fromRGB(255, 255, 255)
-Label.TextScaled = true
-Label.Font = Enum.Font.GothamBold
-Label.Parent = Frame
+UICorner.CornerRadius = UDim.new(0, 12)
+UICorner.Parent = Frame
+
+-- Top bar
+TopBar.Size = UDim2.new(1, 0, 0, 40)
+TopBar.Position = UDim2.new(0, 0, 0, 0)
+TopBar.BackgroundColor3 = isSupported and Color3.fromRGB(30, 120, 255) or Color3.fromRGB(200, 40, 40)
+TopBar.BorderSizePixel = 0
+TopBar.ZIndex = 3
+TopBar.Parent = Frame
+
+TopBarCorner.CornerRadius = UDim.new(0, 12)
+TopBarCorner.Parent = TopBar
+
+-- Fix bottom corners of top bar
+local TopBarFix = Instance.new("Frame")
+TopBarFix.Size = UDim2.new(1, 0, 0.5, 0)
+TopBarFix.Position = UDim2.new(0, 0, 0.5, 0)
+TopBarFix.BackgroundColor3 = TopBar.BackgroundColor3
+TopBarFix.BorderSizePixel = 0
+TopBarFix.ZIndex = 3
+TopBarFix.Parent = TopBar
+
+-- Title
+Title.Size = UDim2.new(1, 0, 1, 0)
+Title.BackgroundTransparency = 1
+Title.Text = isSupported and "✓  Kicia Hook Script" or "✗  Incompatible Executor"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextScaled = true
+Title.Font = Enum.Font.GothamBold
+Title.ZIndex = 4
+Title.Parent = TopBar
+
+-- Divider
+Divider.Size = UDim2.new(0.9, 0, 0, 1)
+Divider.Position = UDim2.new(0.05, 0, 0, 48)
+Divider.BackgroundColor3 = Color3.fromRGB(50, 50, 65)
+Divider.BorderSizePixel = 0
+Divider.ZIndex = 3
+Divider.Parent = Frame
+
+-- Message
+MessageLabel.Size = UDim2.new(0.85, 0, 0, 70)
+MessageLabel.Position = UDim2.new(0.075, 0, 0, 58)
+MessageLabel.BackgroundTransparency = 1
+MessageLabel.TextColor3 = Color3.fromRGB(210, 210, 220)
+MessageLabel.TextScaled = true
+MessageLabel.Font = Enum.Font.Gotham
+MessageLabel.TextWrapped = true
+MessageLabel.ZIndex = 3
+MessageLabel.Parent = Frame
+
+if isSupported then
+    MessageLabel.Text = "Hi! Welcome to Kicia Hook Script.\nRunning on: " .. executorName
+else
+    MessageLabel.Text = "Your executor is not supported.\nOnly  Volt  and  Wave  work with this script."
+    MessageLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+end
 
 -- Close button
-CloseButton.Size = UDim2.new(0.4, 0, 0.3, 0)
-CloseButton.Position = UDim2.new(0.3, 0, 0.65, 0)
-CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.Size = UDim2.new(0.45, 0, 0, 34)
+CloseButton.Position = UDim2.new(0.275, 0, 1, -46)
+CloseButton.BackgroundColor3 = isSupported and Color3.fromRGB(30, 120, 255) or Color3.fromRGB(200, 40, 40)
 CloseButton.Text = "Close"
 CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CloseButton.Font = Enum.Font.Gotham
+CloseButton.Font = Enum.Font.GothamBold
 CloseButton.TextScaled = true
 CloseButton.BorderSizePixel = 0
+CloseButton.ZIndex = 3
 CloseButton.Parent = Frame
 
--- Close button functionality
+CloseCorner.CornerRadius = UDim.new(0, 8)
+CloseCorner.Parent = CloseButton
+
 CloseButton.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
+
+-- Stop script if executor not supported
+if not isSupported then return end
+
+-- Your actual script continues below this line...
